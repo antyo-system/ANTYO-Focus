@@ -1,27 +1,9 @@
-from app.models import FocusSession
-from app.database import Base, engine, SessionLocal
-import datetime
+from fastapi import FastAPI
+from app.routes import focus_routes, focus_quest, focus_tracker, user_progress, user
 
-# 1. Create tables (kalau belum ada)
-Base.metadata.create_all(bind=engine)
-
-# 2. Setup session
-db = SessionLocal()
-
-# 3. Coba insert data FocusSession (dummy data)
-new_session = FocusSession(
-    user_id=1,
-    start_time=datetime.datetime(2025, 3, 21, 10, 0, 0),
-    end_time=datetime.datetime(2025, 3, 21, 11, 0, 0),
-    duration_minutes=60.0,
-    description="Testing Session"
-)
-db.add(new_session)
-db.commit()
-
-print("Database & Model setup berhasil!")
-
-# 4. Optional: Query & print data
-sessions = db.query(FocusSession).all()
-for session in sessions:
-    print(session)
+app = FastAPI()
+app.include_router(focus_routes.router)
+app.include_router(focus_quest.router)
+app.include_router(focus_tracker.router)
+app.include_router(user_progress.router)
+app.include_router(user.router)
