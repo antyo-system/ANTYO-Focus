@@ -12,6 +12,7 @@ router = APIRouter(prefix="/quests", tags=["focus quest"])
 
 
 
+
 from app.services.auth_service import get_db, get_current_user
 from app.models.focus_quest import FocusQuest
 from app.models.user import User
@@ -30,6 +31,7 @@ def create_focus_quest(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+
 
 def get_db():
     db = SessionLocal()
@@ -61,6 +63,7 @@ def read_focus_quests(db: Session = Depends(get_db)):
 
 
 
+
     return db.query(FocusQuest).all()
 
 
@@ -73,6 +76,7 @@ def read_focus_quest(
 ):
 
 def read_focus_quest(quest_id: int, db: Session = Depends(get_db)):
+
 
 
 

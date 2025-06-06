@@ -6,3 +6,6 @@ from .user import User
 
 from .pomodoro import PomodoroSession
 
+
+from .pomodoro import PomodoroSession
+

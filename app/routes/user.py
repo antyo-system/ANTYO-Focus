@@ -10,7 +10,12 @@ from app.dependencies.auth import get_db, get_current_user
 from app.services.auth_service import get_password_hash
 from app.dependencies.auth import get_db, get_current_user
 
+
+from app.services.auth_service import get_password_hash
+from app.dependencies.auth import get_db, get_current_user
+
 from app.services.auth_service import get_db, get_password_hash, get_current_user
+
 
 
 from app.models.user import User
