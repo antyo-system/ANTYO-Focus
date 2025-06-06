@@ -46,6 +46,7 @@ def get_db():
 def create_focus_quest(quest: FocusQuestCreate, db: Session = Depends(get_db)):
 
 
+
     db_quest = FocusQuest(**quest.dict())
     db.add(db_quest)
     db.commit()

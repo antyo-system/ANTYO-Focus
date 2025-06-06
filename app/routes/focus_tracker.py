@@ -28,6 +28,11 @@ from app.models.focus_tracker import FocusTracker
 from app.models.user import User
 
 
+from app.dependencies.auth import get_db, get_current_user
+from app.models.focus_tracker import FocusTracker
+from app.models.user import User
+
+
 from app.services.auth_service import get_db, get_current_user
 from app.models.focus_tracker import FocusTracker
 from app.models.user import User
@@ -83,7 +88,6 @@ def read_trackers(
 ):
 
 def read_trackers(db: Session = Depends(get_db)):
-
 
 
 

@@ -22,7 +22,6 @@ from app.services.auth_service import get_db, get_password_hash, get_current_use
 
 
 
-
 from app.models.user import User
 from app.models.user_progress import UserProgress
 from app.models.focus_tracker import FocusTracker
