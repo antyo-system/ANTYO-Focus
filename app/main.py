@@ -8,5 +8,3 @@ app.include_router(focus_tracker.router)
 app.include_router(user_progress.router)
 app.include_router(user.router)
 app.include_router(auth.router)
-
-
