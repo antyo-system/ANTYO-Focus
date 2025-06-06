@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from math import floor, sqrt
 
-
+from app.dependencies.auth import get_db, get_current_user
 from app.services.auth_service import get_db, get_current_user
 from app.models.user_progress import UserProgress
 from app.models.user import User

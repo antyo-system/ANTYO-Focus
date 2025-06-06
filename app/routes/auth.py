@@ -9,8 +9,8 @@ from app.services.auth_service import (
     get_password_hash,
     authenticate_user,
     create_access_token,
-    get_db,
 )
+from app.dependencies.auth import get_db
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
