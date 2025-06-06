@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# 1️⃣ Connection URL PostgreSQL
-DATABASE_URL = "postgresql+psycopg2://postgres:LvUp_ANTYO%2156@localhost:5432/antyo_focus_db"
+from app.core.settings import get_settings
 
-
+settings = get_settings()
+DATABASE_URL = settings.DATABASE_URL
 
 
 # 2️⃣ Setup Engine & Session

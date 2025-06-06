@@ -8,6 +8,11 @@ from app.models.focus_tracker import FocusTracker
 from app.models.user import User
 
 
+from app.dependencies.auth import get_db, get_current_user
+from app.models.focus_tracker import FocusTracker
+from app.models.user import User
+
+
 from app.services.auth_service import get_db, get_current_user
 from app.models.focus_tracker import FocusTracker
 from app.models.user import User
@@ -19,8 +24,6 @@ from app.models.focus_tracker import FocusTracker
 from app.schemas.focus_tracker import FocusTrackerCreate, FocusTrackerRead
 
 router = APIRouter(prefix="/tracker", tags=["focus tracker"])
-
-
 
 
 
@@ -43,6 +46,7 @@ def get_db():
 def create_tracker(entry: FocusTrackerCreate, db: Session = Depends(get_db)):
 
 
+
     db_entry = FocusTracker(**entry.dict())
     db.add(db_entry)
     db.commit()
@@ -56,6 +60,7 @@ def read_trackers(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+
 
 def read_trackers(db: Session = Depends(get_db)):
 

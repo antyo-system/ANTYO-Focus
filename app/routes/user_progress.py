@@ -8,12 +8,18 @@ from app.models.user_progress import UserProgress
 from app.models.user import User
 
 
+from app.dependencies.auth import get_db, get_current_user
+from app.models.user_progress import UserProgress
+from app.models.user import User
+
+
 from app.services.auth_service import get_db, get_current_user
 from app.models.user_progress import UserProgress
 from app.models.user import User
 
 from app.database import SessionLocal
 from app.models.user_progress import UserProgress
+
 
 
 from app.schemas.user_progress import UserProgressCreate, UserProgressRead, AddXPRequest
@@ -31,6 +37,7 @@ def get_db():
 
 
 
+
 def calculate_level(xp: int) -> int:
     return int(floor(sqrt(xp / 10)))
 
@@ -43,8 +50,8 @@ def get_progress(
     current_user: User = Depends(get_current_user),
 ):
 
-
 def get_progress(user_id: str, db: Session = Depends(get_db)):
+
 
 
     progress = db.query(UserProgress).filter(UserProgress.user_id == user_id).first()
@@ -61,8 +68,8 @@ def add_xp(
     current_user: User = Depends(get_current_user),
 ):
 
-
 def add_xp(payload: AddXPRequest, db: Session = Depends(get_db)):
+
 
 
     progress = db.query(UserProgress).filter(UserProgress.user_id == payload.user_id).first()
