@@ -6,9 +6,11 @@ from sqlalchemy.orm import Session
 
 from app.database import SessionLocal
 from app.models.user import User
+from app.core.settings import get_settings
 
-SECRET_KEY = "SECRET_KEY_CHANGE_ME"
-ALGORITHM = "HS256"
+settings = get_settings()
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.JWT_ALGORITHM
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 

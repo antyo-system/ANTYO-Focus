@@ -9,9 +9,11 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.user import User
 from app.schemas.user import TokenData
+from app.core.settings import get_settings
 
-SECRET_KEY = "SECRET_KEY_CHANGE_ME"
-ALGORITHM = "HS256"
+settings = get_settings()
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.JWT_ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
