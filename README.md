@@ -23,11 +23,15 @@ Aplikasi manajemen fokus dengan sistem XP, leveling, dan pelacakan habit berbasi
    ```bash
    cp .env.example .env
    ```
-5. **Jalankan server**
+5. **Jalankan migrasi database**
+   ```bash
+   alembic upgrade head
+   ```
+6. **Jalankan server**
    ```bash
    uvicorn app.main:app --reload
    ```
-6. **Testing** (jika tersedia)
+7. **Testing** (jika tersedia)
    ```bash
    python -m py_compile app/main.py
    ```
@@ -50,6 +54,7 @@ app/
 ├── schemas/         # skema Pydantic
 ├── services/        # logika bisnis
 └── database.py      # koneksi database
+alembic/            # berkas migrasi database
 .env.example         # contoh konfigurasi lingkungan
 README.md            # dokumentasi proyek
 ```
