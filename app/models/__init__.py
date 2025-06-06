@@ -13,3 +13,6 @@ from .pomodoro import PomodoroSession
 from .pomodoro import PomodoroSession
 
 
+from .pomodoro import PomodoroSession
+
+

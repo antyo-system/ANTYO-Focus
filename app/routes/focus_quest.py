@@ -26,6 +26,7 @@ router = APIRouter(prefix="/quests", tags=["focus quest"])
 
 
 
+
 @router.post("/", response_model=FocusQuestRead)
 def create_focus_quest(
     quest: FocusQuestCreate,
@@ -45,7 +46,6 @@ def get_db():
 def create_focus_quest(quest: FocusQuestCreate, db: Session = Depends(get_db)):
 
 
-
     db_quest = FocusQuest(**quest.dict())
     db.add(db_quest)
     db.commit()
@@ -59,7 +59,6 @@ def read_focus_quests(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-
 
 def read_focus_quests(db: Session = Depends(get_db)):
 
@@ -80,8 +79,6 @@ def read_focus_quest(
 
 
 def read_focus_quest(quest_id: int, db: Session = Depends(get_db)):
-
-
 
 
 

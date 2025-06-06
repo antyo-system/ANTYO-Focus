@@ -28,9 +28,11 @@ from app.models.user_progress import UserProgress
 
 
 
+
 from app.schemas.user_progress import UserProgressCreate, UserProgressRead, AddXPRequest
 
 router = APIRouter(prefix="/progress", tags=["user progress"])
+
 
 
 
@@ -40,6 +42,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 
 
@@ -78,7 +81,9 @@ def add_xp(
     current_user: User = Depends(get_current_user),
 ):
 
+
 def add_xp(payload: AddXPRequest, db: Session = Depends(get_db)):
+
 
 
 
