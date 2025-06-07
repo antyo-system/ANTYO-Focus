@@ -1,7 +1,17 @@
-from typing import List
+from typing import List, Generator
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from app.database import SessionLocal
+from app.dependencies.auth import get_current_user
+
+
+def get_db() -> Generator[Session, None, None]:
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 from app.dependencies.auth import get_db, get_current_user
 from app.models.focus_models import FocusSession
