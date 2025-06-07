@@ -10,6 +10,7 @@ from app.models.user import User
 
 
 
+
 from app.core.settings import get_settings
 
 settings = get_settings()
@@ -19,8 +20,10 @@ ALGORITHM = settings.JWT_ALGORITHM
 
 
 
+
 SECRET_KEY = "SECRET_KEY_CHANGE_ME"
 ALGORITHM = "HS256"
+
 
 
 

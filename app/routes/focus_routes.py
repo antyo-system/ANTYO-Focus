@@ -1,3 +1,23 @@
+
+from typing import List, Generator
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.database import SessionLocal
+from app.models.focus_models import FocusSession
+from app.models.user import User
+from app.schemas.focus_schema import FocusSessionCreate, FocusSessionRead
+
+from app.dependencies.auth import get_current_user
+
+
+def get_db() -> Generator[Session, None, None]:
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -41,6 +61,7 @@ from app.models.focus_models import FocusSession
 
 from app.schemas.focus_schema import FocusSessionCreate, FocusSessionRead
 
+
 router = APIRouter(prefix="/focus", tags=["focus quest"])
 
 
@@ -82,6 +103,7 @@ def read_focus_sessions(
 ):
 
 def read_focus_sessions(db: Session = Depends(get_db)):
+
 
 
 

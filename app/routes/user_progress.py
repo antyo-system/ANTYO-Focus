@@ -35,7 +35,6 @@ router = APIRouter(prefix="/progress", tags=["user progress"])
 
 
 
-
 def get_db():
     db = SessionLocal()
     try:
@@ -69,6 +68,7 @@ def get_progress(user_id: str, db: Session = Depends(get_db)):
 
 
 
+
     progress = db.query(UserProgress).filter(UserProgress.user_id == user_id).first()
     if not progress:
         raise HTTPException(status_code=404, detail="Progress not found")
@@ -85,9 +85,6 @@ def add_xp(
 
 
 def add_xp(payload: AddXPRequest, db: Session = Depends(get_db)):
-
-
-
 
 
 

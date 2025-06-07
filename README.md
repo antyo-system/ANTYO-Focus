@@ -40,6 +40,7 @@ Aplikasi manajemen fokus dengan sistem XP, leveling, dan pelacakan habit berbasi
    ```
 6. **Testing** (jika tersedia)
 
+
    ```bash
    python -m py_compile app/main.py
    ```
@@ -64,6 +65,10 @@ app/
 └── database.py      # koneksi database
 
 alembic/            # berkas migrasi database
+
+
+alembic/            # berkas migrasi database
+
 
 .env.example         # contoh konfigurasi lingkungan
 README.md            # dokumentasi proyek
