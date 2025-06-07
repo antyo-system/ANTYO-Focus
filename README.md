@@ -34,11 +34,13 @@ Aplikasi manajemen fokus dengan sistem XP, leveling, dan pelacakan habit berbasi
    ```
 7. **Testing** (jika tersedia)
 
+
 5. **Jalankan server**
    ```bash
    uvicorn app.main:app --reload
    ```
 6. **Testing** (jika tersedia)
+
 
 
    ```bash
@@ -63,6 +65,8 @@ app/
 ├── schemas/         # skema Pydantic
 ├── services/        # logika bisnis
 └── database.py      # koneksi database
+
+alembic/            # berkas migrasi database
 
 alembic/            # berkas migrasi database
 

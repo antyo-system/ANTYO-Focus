@@ -18,6 +18,7 @@ def get_db() -> Generator[Session, None, None]:
     finally:
         db.close()
 
+
 from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -62,6 +63,7 @@ from app.models.focus_models import FocusSession
 from app.schemas.focus_schema import FocusSessionCreate, FocusSessionRead
 
 
+
 router = APIRouter(prefix="/focus", tags=["focus quest"])
 
 
@@ -71,7 +73,6 @@ def create_focus_session(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-
 
 
 def get_db():
@@ -84,7 +85,6 @@ def get_db():
 
 @router.post("/sessions", response_model=FocusSessionRead)
 def create_focus_session(session: FocusSessionCreate, db: Session = Depends(get_db)):
-
 
 
 
@@ -103,8 +103,6 @@ def read_focus_sessions(
 ):
 
 def read_focus_sessions(db: Session = Depends(get_db)):
-
-
 
 
 
