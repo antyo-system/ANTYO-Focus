@@ -91,6 +91,44 @@ Once running, the API is available at `http://localhost:3001/api`.
   npm test
   ```
 
+## Deploy
+
+### Build a production image
+1. Ensure a `.env` file exists with production-ready values.
+2. Build and run the Docker image from the `backend` folder:
+   ```bash
+   docker build -t antyo-focus-backend .
+   docker run -p 3001:3001 --env-file .env antyo-focus-backend
+   ```
+
+The Dockerfile uses a multi-stage build to generate the Prisma client and prune development dependencies before shipping the runtime image.
+
+### Render
+1. Create a new **Web Service** from this repository and point it to the `backend` directory.
+2. Set the environment variables from `.env.example` (for SQLite, keep `DATABASE_URL="file:./prisma/dev.db"`).
+3. Use the following commands:
+   - **Build command:** `npm install && npx prisma generate`
+   - **Start command:** `node src/index.js`
+4. Add a **Post-deploy command** to apply migrations: `npx prisma migrate deploy`.
+
+### Railway
+1. Create a new **Service** and deploy the `backend` folder.
+2. Configure `DATABASE_URL`, `JWT_SECRET`, and other values from `.env.example` as Railway variables.
+3. Set the **Start Command** to `node src/index.js` and add a **Deploy hook** command `npx prisma migrate deploy` to keep the schema up-to-date.
+
+### Heroku
+1. Create a Heroku app and add the repository as a deployment source.
+2. Set config vars for all entries in `.env.example`; if using SQLite, set `DATABASE_URL` to a writable path such as `file:./prisma/dev.db`.
+3. Define the **Buildpack** as `heroku/nodejs` (or use the default Node detection).
+4. Add a **release phase** command to run migrations automatically:
+   ```bash
+   npx prisma migrate deploy
+   ```
+5. Set the **Procfile** (or Heroku "Command") to start the API:
+   ```bash
+   web: node src/index.js
+   ```
+
 ## Healthcheck
 A healthcheck route is available at `GET /api/health` and returns a simple status payload.
 
