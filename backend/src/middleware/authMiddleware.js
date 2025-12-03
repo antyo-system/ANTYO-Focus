@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const userRepository = require('../repositories/userRepository');
+const { logger } = require('./logger');
 
 const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -21,6 +22,7 @@ const authMiddleware = async (req, res, next) => {
     req.user = { id: user.id, email: user.email };
     return next();
   } catch (error) {
+    logger.warn('JWT verification failed', { error });
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
