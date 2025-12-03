@@ -1,0 +1,247 @@
+openapi: 3.0.3
+info:
+  title: ANTYO Focus Backend API
+  version: "1.0.0"
+  description: |
+    HTTP API for authentication, tasks, and focus sessions used by the ANTYO Focus application.
+servers:
+  - url: http://localhost:3001/api
+    description: Local development server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        name:
+          type: string
+          nullable: true
+          example: Demo User
+        createdAt:
+          type: string
+          format: date-time
+          example: 2024-06-01T12:00:00.000Z
+      required:
+        - id
+        - email
+        - createdAt
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12
+        title:
+          type: string
+          example: Write documentation
+        description:
+          type: string
+          nullable: true
+          example: Draft README and API specs
+        status:
+          type: string
+          enum: [PENDING, IN_PROGRESS, COMPLETED]
+          example: PENDING
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+          example: 2024-09-20T15:00:00.000Z
+        createdAt:
+          type: string
+          format: date-time
+          example: 2024-09-10T09:30:00.000Z
+        userId:
+          type: integer
+          example: 1
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/FocusSession'
+      required:
+        - id
+        - title
+        - status
+        - createdAt
+        - userId
+        - sessions
+    FocusSession:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 4
+        startTime:
+          type: string
+          format: date-time
+          example: 2024-09-12T10:00:00.000Z
+        endTime:
+          type: string
+          format: date-time
+          nullable: true
+          example: 2024-09-12T10:25:00.000Z
+        durationSeconds:
+          type: integer
+          example: 1500
+        status:
+          type: string
+          enum: [PLANNED, ACTIVE, COMPLETED]
+          example: COMPLETED
+        createdAt:
+          type: string
+          format: date-time
+          example: 2024-09-12T10:00:00.000Z
+        taskId:
+          type: integer
+          example: 12
+      required:
+        - id
+        - startTime
+        - durationSeconds
+        - status
+        - createdAt
+        - taskId
+    FocusSessionWithTask:
+      allOf:
+        - $ref: '#/components/schemas/FocusSession'
+        - type: object
+          properties:
+            task:
+              $ref: '#/components/schemas/Task'
+          required:
+            - task
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                name:
+                  type: string
+                  example: Demo User
+                password:
+                  type: string
+                  format: password
+                  example: password123
+              required:
+                - email
+                - password
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                required:
+                  - user
+        '400':
+          description: Missing required fields
+        '409':
+          description: Email already registered
+  /auth/login:
+    post:
+      summary: Log in and receive a JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: password123
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Login succeeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  user:
+                    $ref: '#/components/schemas/User'
+                required:
+                  - token
+                  - user
+        '400':
+          description: Missing credentials
+        '401':
+          description: Invalid email or password
+  /tasks:
+    get:
+      summary: List tasks for the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Tasks retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Task'
+                required:
+                  - tasks
+        '401':
+          description: Missing or invalid JWT
+  /sessions:
+    get:
+      summary: List focus sessions for the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Sessions retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FocusSessionWithTask'
+                required:
+                  - sessions
+        '401':
+          description: Missing or invalid JWT
