@@ -1,4 +1,20 @@
 {
+
+  "name": "antyo-focus-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:generate": "prisma generate",
+    "prisma:seed": "prisma db seed"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+
   "name": "backend",
   "version": "1.0.0",
   "description": "Backend server for ANTYO-Focus",
@@ -14,5 +30,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
+
   }
 }
