@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import packageJson from "../../package.json";
+import { useNavigate } from "react-router-dom";
+
+const version = packageJson.version;
 
 export default function Dashboard() {
   const [history, setHistory] = useState([]);
@@ -13,7 +17,10 @@ export default function Dashboard() {
   // hitung total harian (sementara total semua aja dulu)
   const totalFocus = history.reduce((sum, s) => sum + s.focus, 0);
   const totalDistracted = history.reduce((sum, s) => sum + s.distracted, 0);
-
+  const navigate = useNavigate();
+  const handleStartNewSession = () => {
+    navigate("/prefocus");
+  };
   return (
     <div className="min-h-screen bg-black text-white p-10">
       <h1 className="text-4xl font-bold text-green-400 mb-8">Focus Summary</h1>
@@ -23,6 +30,12 @@ export default function Dashboard() {
         <p>Total Distracted Time: {Math.floor(totalDistracted / 60)} min</p>
         <p>Total Sessions: {history.length}</p>
       </div>
+      <button
+        onClick={handleStartNewSession}
+        className="mt-8 bg-green-400 text-black font-bold py-3 px-6 rounded-xl text-lg hover:bg-green-300 transition"
+      >
+        🎯 Start New Session
+      </button>
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">Recent Sessions</h2>
       <div className="space-y-4">
@@ -49,6 +62,8 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+
+      <div className="mt-10 text-gray-500 text-sm">App Version: {version}</div>
     </div>
   );
 }
