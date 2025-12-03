@@ -1,14 +1,18 @@
-import { PrismaClient, TaskStatus, FocusSessionStatus } from '@prisma/client';
+const { PrismaClient, TaskStatus, FocusSessionStatus } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
 async function main() {
+  const passwordHash = await bcrypt.hash('password123', 10);
+
   const user = await prisma.user.upsert({
     where: { email: 'demo@antyo.focus' },
     update: {},
     create: {
       email: 'demo@antyo.focus',
       name: 'Demo User',
+      passwordHash,
     },
   });
 
