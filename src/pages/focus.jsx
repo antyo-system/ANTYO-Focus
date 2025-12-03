@@ -6,6 +6,19 @@ export default function FocusScreen() {
   const canvasRef = useRef(null);
   const [status, setStatus] = useState("DISTRACTED");
   const [focusTime, setFocusTime] = useState(0);
+  const [sessionData, setSessionData] = useState(null);
+
+  // ✅ Tambahan Step 1: state untuk menyimpan history lama
+  const [focusHistory, setFocusHistory] = useState([]);
+  const [distractedTime, setDistractedTime] = useState(0);
+
+  // 🟩 Ambil data dari PreFocus
+  useEffect(() => {
+    const storedSession = localStorage.getItem("antyo_session");
+    if (storedSession) {
+      setSessionData(JSON.parse(storedSession));
+    }
+  }, []);
 
   useEffect(() => {
     let landmarker;
@@ -30,7 +43,9 @@ export default function FocusScreen() {
         });
 
         // ✅ Akses kamera
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
         videoRef.current.srcObject = stream;
 
         await new Promise((resolve) => {
@@ -48,7 +63,12 @@ export default function FocusScreen() {
               performance.now()
             );
 
-            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+            ctx.clearRect(
+              0,
+              0,
+              canvasRef.current.width,
+              canvasRef.current.height
+            );
 
             if (results.faceLandmarks && results.faceLandmarks.length > 0) {
               setStatus("FOCUS [ON]");
@@ -87,6 +107,14 @@ export default function FocusScreen() {
     };
   }, []);
 
+  // ✅ Step 1: Load history lama dari localStorage saat halaman pertama kali dibuka
+  useEffect(() => {
+    const stored = localStorage.getItem("focus_history");
+    if (stored) {
+      setFocusHistory(JSON.parse(stored));
+    }
+  }, []);
+
   // ✅ Timer logic
   useEffect(() => {
     let timer;
@@ -95,6 +123,36 @@ export default function FocusScreen() {
     }
     return () => clearInterval(timer);
   }, [status]);
+  // 🔵 Timer logic — hitung focusTime
+
+  // ⭐ Count distracted time
+  useEffect(() => {
+    let disTimer;
+    if (status === "DISTRACTED") {
+      disTimer = setInterval(() => setDistractedTime((t) => t + 1), 1000);
+    }
+    return () => clearInterval(disTimer);
+  }, [status]);
+
+  // ✅ Step 3: Handle Stop Session
+  const handleStop = () => {
+    const endTime = Date.now();
+    const newSession = {
+      task: sessionData?.task || "Unnamed Task",
+      focus: focusTime,
+      distracted: distractedTime,
+      startedAt:
+        sessionData?.startTime || endTime - (focusTime + distractedTime) * 1000,
+      endedAt: endTime,
+      total: focusTime + distractedTime,
+    };
+
+    const updatedHistory = [...focusHistory, newSession];
+    localStorage.setItem("focus_history", JSON.stringify(updatedHistory));
+    localStorage.removeItem("antyo_session");
+
+    window.location.href = "/dashboard";
+  };
 
   return (
     <div className="relative w-screen h-screen bg-black text-white overflow-hidden">
@@ -122,10 +180,16 @@ export default function FocusScreen() {
       <div className="absolute top-4 right-6 text-lg drop-shadow-md">
         Focus Time: {focusTime}s
       </div>
+      {/* Task name display */}
+      {sessionData && (
+        <div className="absolute top-16 left-6 text-lg text-green-300 drop-shadow-md">
+          Task: {sessionData.task}
+        </div>
+      )}
 
       {/* Stop button */}
       <button
-        onClick={() => window.location.reload()}
+        onClick={handleStop}
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-red-500 hover:bg-red-600 text-white font-bold px-8 py-3 rounded-full shadow-lg"
       >
         STOP
