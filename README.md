@@ -1,85 +1,16 @@
-# ANTYO Focus
+# React + Vite
 
-Aplikasi manajemen fokus dengan sistem XP, leveling, dan pelacakan habit berbasis Pomodoro. Dibuat menggunakan **FastAPI** dan **PostgreSQL**.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Cara Menjalankan di Lokal
+Currently, two official plugins are available:
 
-1. **Clone repo**
-   ```bash
-   git clone <repo-url>
-   cd ANTYO-Focus
-   ```
-2. **Setup virtualenv** (opsional namun disarankan)
-   ```bash
-   python -m venv venv
-   source venv/bin/activate
-   ```
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. **Siapkan `.env`**
-   Salin file `.env.example` kemudian ubah nilainya sesuai konfigurasi lokal.
-   ```bash
-   cp .env.example .env
-   ```
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-5. **Jalankan migrasi database**
-   ```bash
-   alembic upgrade head
-   ```
-6. **Jalankan server**
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-7. **Testing** (jika tersedia)
+## React Compiler
 
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-5. **Jalankan server**
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-6. **Testing** (jika tersedia)
+## Expanding the ESLint configuration
 
-
-
-   ```bash
-   python -m py_compile app/main.py
-   ```
-
-## Fitur Utama
-
-- **Autentikasi JWT** – endpoint register dan login.
-- **Focus Quest** – timer Pomodoro dan laporan sesi.
-- **User Progress** – XP dan sistem leveling.
-- **Habit Tracker** – pencatatan durasi fokus harian/mingguan.
-- **Dokumentasi API otomatis** tersedia di `/docs`.
-
-## Struktur Folder
-
-```
-app/
-├── core/            # konfigurasi & utilitas (settings, auth)
-├── models/          # model SQLAlchemy
-├── routes/          # endpoint FastAPI
-├── schemas/         # skema Pydantic
-├── services/        # logika bisnis
-└── database.py      # koneksi database
-
-alembic/            # berkas migrasi database
-
-alembic/            # berkas migrasi database
-
-
-alembic/            # berkas migrasi database
-
-
-.env.example         # contoh konfigurasi lingkungan
-README.md            # dokumentasi proyek
-```
-
-## Catatan Tambahan
-
-- Menggunakan PostgreSQL, pastikan service database sudah berjalan di lokal.
-- Library `python-dotenv` dipakai untuk memuat variabel lingkungan.
-- Saat ini merupakan versi MVP dan masih dalam tahap pengembangan aktif.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

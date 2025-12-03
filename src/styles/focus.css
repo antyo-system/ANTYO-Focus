@@ -1,0 +1,95 @@
+.focus-screen {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: black;
+}
+
+/* Webcam */
+.webcam-feed {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(2px) brightness(0.9);
+  z-index: 1;
+}
+
+/* Canvas */
+.canvas-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+/* HUD Frame */
+.hud-frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.35;
+  z-index: 3;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* UI Layer */
+.focus-ui {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #aaf9ff;
+  text-shadow: 0 0 15px #26ffff;
+}
+
+.focus-status {
+  font-size: 4rem;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+
+.timer {
+  font-size: 1.5rem;
+  margin-top: 15px;
+}
+
+.xp-container {
+  width: 300px;
+  height: 15px;
+  border: 2px solid #6affff;
+  border-radius: 10px;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+.xp-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #00ffd5, #00ffa2);
+  box-shadow: 0 0 15px #00ffc8;
+}
+
+.level {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+.stop-btn {
+  margin-top: 40px;
+  padding: 12px 40px;
+  border: 2px solid #ff4b4b;
+  border-radius: 12px;
+  background: rgba(255, 0, 0, 0.25);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px red;
+}
