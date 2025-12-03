@@ -1,0 +1,58 @@
+// Prisma schema for ANTYO Focus backend
+// Database connection configured via DATABASE_URL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum FocusSessionStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+
+  tasks     Task[]
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  status      TaskStatus @default(PENDING)
+  dueDate     DateTime?
+  createdAt   DateTime   @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int
+
+  sessions FocusSession[]
+}
+
+model FocusSession {
+  id              Int                @id @default(autoincrement())
+  startTime       DateTime
+  endTime         DateTime?
+  durationSeconds Int
+  status          FocusSessionStatus @default(PLANNED)
+  createdAt       DateTime           @default(now())
+
+  task   Task @relation(fields: [taskId], references: [id])
+  taskId Int
+}
