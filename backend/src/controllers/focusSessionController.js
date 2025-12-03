@@ -1,4 +1,4 @@
-const { FocusSessionStatus, TaskStatus } = require('@prisma/client');
+const { FocusSessionStatus, TaskStatus } = require('../utils/prisma');
 const focusSessionService = require('../services/focusSessionService');
 const { logger } = require('../middleware/logger');
 

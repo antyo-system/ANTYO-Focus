@@ -1,4 +1,4 @@
-const { TaskStatus } = require('@prisma/client');
+const { TaskStatus } = require('../utils/prisma');
 const taskRepository = require('../repositories/taskRepository');
 
 const getTasksForUser = async (userId) => taskRepository.findTasksByUserId(userId);

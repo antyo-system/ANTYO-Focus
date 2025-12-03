@@ -1,6 +1,50 @@
 const { createLogger, format, transports } = require('winston');
 const config = require('../config/config');
 
+const SENSITIVE_KEYS = [
+  'password',
+  'pass',
+  'authorization',
+  'auth',
+  'token',
+  'access_token',
+  'refresh_token',
+  'apikey',
+  'secret',
+  'cookie',
+  'set-cookie'
+];
+
+const sanitizeMeta = (meta) => {
+  const redactValue = (value) => {
+    if (value instanceof Error) {
+      return {
+        message: value.message,
+        stack: value.stack,
+      };
+    }
+
+    if (Array.isArray(value)) {
+      return value.map((item) => redactValue(item));
+    }
+
+    if (value && typeof value === 'object') {
+      return Object.entries(value).reduce((sanitized, [innerKey, innerValue]) => {
+        const shouldRedact = SENSITIVE_KEYS.some((sensitiveKey) =>
+          innerKey.toLowerCase().includes(sensitiveKey)
+        );
+
+        sanitized[innerKey] = shouldRedact ? '[REDACTED]' : redactValue(innerValue, innerKey);
+        return sanitized;
+      }, Array.isArray(value) ? [] : {});
+    }
+
+    return value;
+  };
+
+  return redactValue(meta);
+};
+
 const logger = createLogger({
   level: config.logLevel,
   format: format.combine(
@@ -14,7 +58,8 @@ const logger = createLogger({
         format.colorize(),
         format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         format.printf(({ timestamp, level, message, ...meta }) => {
-          const metaString = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : '';
+          const sanitizedMeta = sanitizeMeta(meta);
+          const metaString = Object.keys(sanitizedMeta).length ? ` ${JSON.stringify(sanitizedMeta)}` : '';
           return `${timestamp} [${level}]: ${message}${metaString}`;
         })
       )

@@ -1,4 +1,4 @@
-const { TaskStatus, FocusSessionStatus } = require('@prisma/client');
+const { TaskStatus, FocusSessionStatus } = require('../utils/prisma');
 const prisma = require('../config/db');
 
 const buildStatusCounts = (groups, statuses) =>
