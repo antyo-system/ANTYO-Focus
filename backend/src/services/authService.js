@@ -4,7 +4,7 @@ const config = require('../config/config');
 const userRepository = require('../repositories/userRepository');
 
 const sanitizeUser = (user) => {
-  const { passwordHash, ...safeUser } = user;
+  const { passwordHash: _passwordHash, ...safeUser } = user;
   return safeUser;
 };
 

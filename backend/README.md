@@ -3,14 +3,13 @@
 Backend Express server for ANTYO-Focus powered by [Prisma](https://www.prisma.io/) and SQLite for local development. The schema includes `User`, `Task`, and `FocusSession` models plus relationships to support task tracking and focus sessions.
 
 ## Environment variables
-Create a `.env` file in the `backend` directory with the database connection string and JWT settings:
+Copy `.env.example` to `.env` in the `backend` directory and adjust as needed:
 
 ```bash
-DATABASE_URL="file:./prisma/dev.db"
-JWT_SECRET="replace-with-strong-secret"
-JWT_EXPIRES_IN="1d"
-PORT=3001
+cp .env.example .env
 ```
+
+Key variables include the server port, database connection string, JWT configuration, and the log level for the request logger.
 
 ## Setup
 1. Install dependencies:
@@ -38,6 +37,16 @@ For development with automatic reloads (requires `nodemon` from devDependencies)
 ```bash
 npm run dev
 ```
+
+## Quality
+- Lint the backend codebase:
+  ```bash
+  npm run lint
+  ```
+- Run Node's built-in test runner (no tests are defined yet):
+  ```bash
+  npm test
+  ```
 
 ## Healthcheck
 A healthcheck route is available at `GET /api/health` and returns a simple status payload.
