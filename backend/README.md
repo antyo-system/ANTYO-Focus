@@ -86,7 +86,7 @@ Once running, the API is available at `http://localhost:3001/api`.
   ```bash
   npm run lint
   ```
-- Run Node's built-in test runner (no tests are defined yet):
+- Run Node's built-in test runner:
   ```bash
   npm test
   ```
