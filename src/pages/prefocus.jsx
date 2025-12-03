@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { startSession } from "../services/sessionService";
 
 export default function PreFocus() {
   const navigate = useNavigate();
@@ -8,23 +9,18 @@ export default function PreFocus() {
   const [mode, setMode] = useState("timer"); // timer | stopwatch
   const [duration, setDuration] = useState(25);
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (task.trim() === "") {
       alert("Task cannot be empty!");
       return;
     }
 
-    // Save session to localStorage
-    const session = {
+    await startSession({
       task,
       mode,
-      duration: mode === "timer" ? duration : null,
-      startTime: Date.now(),
-    };
+      targetDurationMinutes: mode === "timer" ? Number(duration) : null,
+    });
 
-    localStorage.setItem("antyo_session", JSON.stringify(session));
-
-    // Redirect to focus page
     navigate("/focus");
   };
 

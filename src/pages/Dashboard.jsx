@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import packageJson from "../../package.json";
 import { useNavigate } from "react-router-dom";
+import { listSessions } from "../services/sessionService";
 
 const version = packageJson.version;
 
@@ -8,15 +9,20 @@ export default function Dashboard() {
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem("focus_history");
-    if (stored) {
-      setHistory(JSON.parse(stored));
-    }
+    const fetchSessions = async () => {
+      const { sessions } = await listSessions();
+      setHistory(sessions);
+    };
+
+    fetchSessions();
   }, []);
 
   // hitung total harian (sementara total semua aja dulu)
-  const totalFocus = history.reduce((sum, s) => sum + s.focus, 0);
-  const totalDistracted = history.reduce((sum, s) => sum + s.distracted, 0);
+  const totalFocus = history.reduce((sum, s) => sum + (s.focusMs || 0), 0);
+  const totalDistracted = history.reduce(
+    (sum, s) => sum + (s.distractedMs || 0),
+    0
+  );
   const navigate = useNavigate();
   const handleStartNewSession = () => {
     navigate("/prefocus");
@@ -52,12 +58,14 @@ export default function Dashboard() {
               {s.task || "Unnamed Task"}
             </p>
             <p>
-              Focus: {Math.floor(s.focus / 60)} min | Distracted:{" "}
-              {Math.floor(s.distracted / 60)} min
+              Focus: {Math.floor((s.focusMs || 0) / 60000)} min | Distracted:{" "}
+              {Math.floor((s.distractedMs || 0) / 60000)} min
+            </p>
+            <p>
+              Target: {s.targetDurationMs ? Math.round(s.targetDurationMs / 60000) : "-"} min | Result: {s.result}
             </p>
             <p className="text-sm text-gray-400">
-              {new Date(s.startedAt).toLocaleString()} →{" "}
-              {new Date(s.endedAt).toLocaleString()}
+              {new Date(s.startTime).toLocaleString()} → {new Date(s.endTime).toLocaleString()}
             </p>
           </div>
         ))}
