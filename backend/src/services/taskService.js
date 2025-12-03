@@ -1,7 +1,8 @@
 const { TaskStatus } = require('../utils/prisma');
 const taskRepository = require('../repositories/taskRepository');
 
-const getTasksForUser = async (userId) => taskRepository.findTasksByUserId(userId);
+const getTasksForUser = async ({ userId, filters, pagination }) =>
+  taskRepository.findTasksByUserId({ userId, filters, pagination });
 
 const getTaskByIdForUser = async (taskId, userId) => taskRepository.findTaskByIdForUser(taskId, userId);
 

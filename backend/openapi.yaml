@@ -121,6 +121,131 @@ components:
               $ref: '#/components/schemas/Task'
           required:
             - task
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        pageSize:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          example: 42
+      required:
+        - page
+        - pageSize
+        - total
+    DashboardDailyFocus:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          example: 2024-09-12
+        focusDurationSeconds:
+          type: integer
+          example: 2700
+        distractionDurationSeconds:
+          type: integer
+          example: 300
+        sessionCount:
+          type: integer
+          example: 3
+      required:
+        - date
+        - focusDurationSeconds
+        - distractionDurationSeconds
+        - sessionCount
+    DashboardSummary:
+      type: object
+      properties:
+        tasks:
+          type: object
+          properties:
+            total:
+              type: integer
+              example: 12
+            byStatus:
+              type: object
+              additionalProperties:
+                type: integer
+            upcoming:
+              type: array
+              items:
+                $ref: '#/components/schemas/Task'
+          required:
+            - total
+            - byStatus
+            - upcoming
+        sessions:
+          type: object
+          properties:
+            total:
+              type: integer
+              example: 28
+            durationSeconds:
+              type: integer
+              example: 54000
+            byStatus:
+              type: object
+              additionalProperties:
+                type: integer
+            recent:
+              type: array
+              items:
+                $ref: '#/components/schemas/FocusSessionWithTask'
+          required:
+            - total
+            - durationSeconds
+            - byStatus
+            - recent
+        focus:
+          type: object
+          properties:
+            streak:
+              type: object
+              properties:
+                currentDays:
+                  type: integer
+                  example: 3
+                longestDays:
+                  type: integer
+                  example: 10
+                lastFocusDate:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  example: 2024-09-12T00:00:00.000Z
+              required:
+                - currentDays
+                - longestDays
+                - lastFocusDate
+            totals:
+              type: object
+              properties:
+                lifetimeFocusSeconds:
+                  type: integer
+                  example: 120000
+                weeklyFocusSeconds:
+                  type: integer
+                  example: 18000
+              required:
+                - lifetimeFocusSeconds
+                - weeklyFocusSeconds
+            daily:
+              type: array
+              items:
+                $ref: '#/components/schemas/DashboardDailyFocus'
+          required:
+            - streak
+            - totals
+            - daily
+      required:
+        - tasks
+        - sessions
+        - focus
 paths:
   /auth/register:
     post:
@@ -208,6 +333,37 @@ paths:
       summary: List tasks for the authenticated user
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number starting from 1
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            default: 10
+          description: Number of tasks per page
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [PENDING, IN_PROGRESS, COMPLETED]
+          description: Filter tasks by status
+        - in: query
+          name: dueFrom
+          schema:
+            type: string
+            format: date
+          description: Include tasks with dueDate greater than or equal to this date
+        - in: query
+          name: dueTo
+          schema:
+            type: string
+            format: date
+          description: Include tasks with dueDate less than or equal to this date
       responses:
         '200':
           description: Tasks retrieved
@@ -220,8 +376,11 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Task'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
                 required:
                   - tasks
+                  - pagination
         '401':
           description: Missing or invalid JWT
   /sessions:
@@ -229,6 +388,42 @@ paths:
       summary: List focus sessions for the authenticated user
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number starting from 1
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+            default: 10
+          description: Number of sessions per page
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [PLANNED, ACTIVE, COMPLETED]
+          description: Filter sessions by status
+        - in: query
+          name: taskId
+          schema:
+            type: integer
+          description: Filter sessions for a specific task
+        - in: query
+          name: startedFrom
+          schema:
+            type: string
+            format: date-time
+          description: Include sessions that started on or after this date
+        - in: query
+          name: startedTo
+          schema:
+            type: string
+            format: date-time
+          description: Include sessions that started on or before this date
       responses:
         '200':
           description: Sessions retrieved
@@ -241,7 +436,30 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/FocusSessionWithTask'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
                 required:
                   - sessions
+                  - pagination
+        '401':
+          description: Missing or invalid JWT
+  /dashboard:
+    get:
+      summary: Aggregated dashboard metrics for the authenticated user
+      description: Returns task counts, recent sessions, focus streak, and daily focus durations for the last 14 days.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dashboard summary loaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary:
+                    $ref: '#/components/schemas/DashboardSummary'
+                required:
+                  - summary
         '401':
           description: Missing or invalid JWT

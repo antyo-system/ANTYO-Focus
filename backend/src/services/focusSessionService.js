@@ -2,7 +2,8 @@ const { FocusSessionStatus, TaskStatus } = require('../utils/prisma');
 const focusSessionRepository = require('../repositories/focusSessionRepository');
 const taskRepository = require('../repositories/taskRepository');
 
-const getSessionsForUser = async (userId) => focusSessionRepository.findSessionsByUserId(userId);
+const getSessionsForUser = async ({ userId, filters, pagination }) =>
+  focusSessionRepository.findSessionsByUserId({ userId, filters, pagination });
 
 const startSession = async ({ userId, taskId, targetDurationSeconds }) => {
   const task = await taskRepository.findTaskByIdForUser(taskId, userId);
