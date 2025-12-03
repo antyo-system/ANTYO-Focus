@@ -7,7 +7,8 @@ const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   jwtSecret: process.env.JWT_SECRET || 'dev-secret-key',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1d',
-  logLevel: process.env.LOG_LEVEL || 'info'
+  logLevel: process.env.LOG_LEVEL || 'info',
+  corsOrigin: process.env.CORS_ORIGIN || '*'
 };
 
 module.exports = config;

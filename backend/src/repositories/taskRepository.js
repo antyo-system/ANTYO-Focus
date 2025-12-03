@@ -1,11 +1,35 @@
 const prisma = require('../config/db');
 
-const findTasksByUserId = async (userId) =>
-  prisma.task.findMany({
-    where: { userId },
-    include: { sessions: true },
-    orderBy: { createdAt: 'desc' },
-  });
+const findTasksByUserId = async ({ userId, filters = {}, pagination }) => {
+  const where = { userId };
+
+  if (filters.status) {
+    where.status = filters.status;
+  }
+
+  if (filters.dueFrom || filters.dueTo) {
+    where.dueDate = {};
+    if (filters.dueFrom) {
+      where.dueDate.gte = filters.dueFrom;
+    }
+    if (filters.dueTo) {
+      where.dueDate.lte = filters.dueTo;
+    }
+  }
+
+  const [tasks, total] = await Promise.all([
+    prisma.task.findMany({
+      where,
+      include: { sessions: true },
+      orderBy: [{ dueDate: 'asc' }, { createdAt: 'desc' }],
+      skip: (pagination.page - 1) * pagination.pageSize,
+      take: pagination.pageSize,
+    }),
+    prisma.task.count({ where }),
+  ]);
+
+  return { tasks, total };
+};
 
 const findTaskByIdForUser = async (taskId, userId) =>
   prisma.task.findFirst({

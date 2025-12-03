@@ -42,9 +42,45 @@ const validateTaskPayload = (payload, { requireTitle = false } = {}) => {
 };
 
 const listTasks = async (req, res) => {
+  const page = Number(req.query.page) || 1;
+  const pageSize = Number(req.query.pageSize) || 10;
+  const filters = {};
+
+  if (page < 1 || pageSize < 1) {
+    return res.status(400).json({ message: 'page and pageSize must be positive integers' });
+  }
+
+  if (req.query.status) {
+    const status = req.query.status.trim();
+    if (!taskService.ensureValidTaskStatus(status)) {
+      return res.status(400).json({ message: 'Invalid task status filter' });
+    }
+    filters.status = status;
+  }
+
+  if (req.query.dueFrom) {
+    const parsed = new Date(req.query.dueFrom);
+    if (Number.isNaN(parsed.getTime())) {
+      return res.status(400).json({ message: 'Invalid dueFrom filter' });
+    }
+    filters.dueFrom = parsed;
+  }
+
+  if (req.query.dueTo) {
+    const parsed = new Date(req.query.dueTo);
+    if (Number.isNaN(parsed.getTime())) {
+      return res.status(400).json({ message: 'Invalid dueTo filter' });
+    }
+    filters.dueTo = parsed;
+  }
+
   try {
-    const tasks = await taskService.getTasksForUser(req.user.id);
-    return res.json({ tasks });
+    const { tasks, total } = await taskService.getTasksForUser({
+      userId: req.user.id,
+      filters,
+      pagination: { page, pageSize },
+    });
+    return res.json({ tasks, pagination: { page, pageSize, total } });
   } catch (error) {
     logger.error('Failed to fetch tasks', { error });
     return res.status(500).json({ message: 'Failed to fetch tasks' });

@@ -3,9 +3,53 @@ const focusSessionService = require('../services/focusSessionService');
 const { logger } = require('../middleware/logger');
 
 const listSessions = async (req, res) => {
+  const page = Number(req.query.page) || 1;
+  const pageSize = Number(req.query.pageSize) || 10;
+  const filters = {};
+
+  if (page < 1 || pageSize < 1) {
+    return res.status(400).json({ message: 'page and pageSize must be positive integers' });
+  }
+
+  if (req.query.status) {
+    const status = req.query.status.trim();
+    if (!Object.values(FocusSessionStatus).includes(status)) {
+      return res.status(400).json({ message: 'Invalid focus session status filter' });
+    }
+    filters.status = status;
+  }
+
+  if (req.query.taskId) {
+    const taskId = Number(req.query.taskId);
+    if (!Number.isInteger(taskId)) {
+      return res.status(400).json({ message: 'taskId filter must be a number' });
+    }
+    filters.taskId = taskId;
+  }
+
+  if (req.query.startedFrom) {
+    const parsed = new Date(req.query.startedFrom);
+    if (Number.isNaN(parsed.getTime())) {
+      return res.status(400).json({ message: 'Invalid startedFrom filter' });
+    }
+    filters.startedFrom = parsed;
+  }
+
+  if (req.query.startedTo) {
+    const parsed = new Date(req.query.startedTo);
+    if (Number.isNaN(parsed.getTime())) {
+      return res.status(400).json({ message: 'Invalid startedTo filter' });
+    }
+    filters.startedTo = parsed;
+  }
+
   try {
-    const sessions = await focusSessionService.getSessionsForUser(req.user.id);
-    return res.json({ sessions });
+    const { sessions, total } = await focusSessionService.getSessionsForUser({
+      userId: req.user.id,
+      filters,
+      pagination: { page, pageSize },
+    });
+    return res.json({ sessions, pagination: { page, pageSize, total } });
   } catch (error) {
     logger.error('Failed to fetch focus sessions', { error });
     return res.status(500).json({ message: 'Failed to fetch focus sessions' });

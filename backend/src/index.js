@@ -3,9 +3,11 @@ const config = require('./config/config');
 const routes = require('./routes');
 const { logger, requestLoggerMiddleware } = require('./middleware/logger');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
+const corsMiddleware = require('./middleware/cors');
 
 const app = express();
 
+app.use(corsMiddleware);
 app.use(express.json());
 app.use(requestLoggerMiddleware);
 app.use('/api', routes);
