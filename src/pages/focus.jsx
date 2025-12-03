@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
+import { getActiveSession, stopSession } from "../services/sessionService";
 
 export default function FocusScreen() {
   const videoRef = useRef(null);
@@ -7,17 +8,11 @@ export default function FocusScreen() {
   const [status, setStatus] = useState("DISTRACTED");
   const [focusTime, setFocusTime] = useState(0);
   const [sessionData, setSessionData] = useState(null);
-
-  // ✅ Tambahan Step 1: state untuk menyimpan history lama
-  const [focusHistory, setFocusHistory] = useState([]);
   const [distractedTime, setDistractedTime] = useState(0);
 
-  // 🟩 Ambil data dari PreFocus
+  // 🟩 Ambil data sesi aktif dari service
   useEffect(() => {
-    const storedSession = localStorage.getItem("antyo_session");
-    if (storedSession) {
-      setSessionData(JSON.parse(storedSession));
-    }
+    setSessionData(getActiveSession());
   }, []);
 
   useEffect(() => {
@@ -107,14 +102,6 @@ export default function FocusScreen() {
     };
   }, []);
 
-  // ✅ Step 1: Load history lama dari localStorage saat halaman pertama kali dibuka
-  useEffect(() => {
-    const stored = localStorage.getItem("focus_history");
-    if (stored) {
-      setFocusHistory(JSON.parse(stored));
-    }
-  }, []);
-
   // ✅ Timer logic
   useEffect(() => {
     let timer;
@@ -135,21 +122,15 @@ export default function FocusScreen() {
   }, [status]);
 
   // ✅ Step 3: Handle Stop Session
-  const handleStop = () => {
-    const endTime = Date.now();
-    const newSession = {
-      task: sessionData?.task || "Unnamed Task",
-      focus: focusTime,
-      distracted: distractedTime,
-      startedAt:
-        sessionData?.startTime || endTime - (focusTime + distractedTime) * 1000,
-      endedAt: endTime,
-      total: focusTime + distractedTime,
-    };
-
-    const updatedHistory = [...focusHistory, newSession];
-    localStorage.setItem("focus_history", JSON.stringify(updatedHistory));
-    localStorage.removeItem("antyo_session");
+  const handleStop = async () => {
+    try {
+      await stopSession({
+        focusSeconds: focusTime,
+        distractedSeconds: distractedTime,
+      });
+    } catch (error) {
+      console.error("Failed to stop session", error);
+    }
 
     window.location.href = "/dashboard";
   };
@@ -177,8 +158,13 @@ export default function FocusScreen() {
       <div className="absolute top-4 left-6 text-2xl font-bold drop-shadow-md">
         {status}
       </div>
-      <div className="absolute top-4 right-6 text-lg drop-shadow-md">
-        Focus Time: {focusTime}s
+      <div className="absolute top-4 right-6 text-lg drop-shadow-md text-right space-y-1">
+        <div>Focus Time: {focusTime}s</div>
+        {sessionData?.targetDurationMs && (
+          <div>
+            Target: {Math.round(sessionData.targetDurationMs / 60000)} min
+          </div>
+        )}
       </div>
       {/* Task name display */}
       {sessionData && (
